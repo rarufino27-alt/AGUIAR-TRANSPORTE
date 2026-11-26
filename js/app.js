@@ -39,4 +39,53 @@ $('pdf').onclick=()=>{
  <div class="foot">FELMOR TRANSPORTE DE EMPRESAS · Documento de orçamento, não é nota fiscal.</div><script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);w.document.close();
 };
 $('clear').onclick=()=>{if(!confirm('Deseja limpar este orçamento?'))return;document.querySelectorAll('input').forEach(e=>e.value=e.type==='date'?'':'0');['client','purpose','origin','destination','otherDesc'].forEach(id=>$(id).value='');$('notes').value='';$('taxEnabled').value='no';$('taxBox').classList.add('hidden');trip='one';wait='hourly';document.querySelectorAll('[data-trip]').forEach(b=>b.classList.toggle('active',b.dataset.trip==='one'));document.querySelectorAll('[data-wait]').forEach(b=>b.classList.toggle('active',b.dataset.wait==='hourly'));$('waitHoursBox').classList.remove('hidden');$('waitRateBox').classList.remove('hidden');$('waitFixedBox').classList.add('hidden');calc()};
+
+const HISTORY_KEY='felmor-company-confirmed-trips-v1';
+const fieldIds=['client','date','purpose','origin','destination','km','hours','rateKm','rateHour','waitHours','waitRate','waitFixed','tolls','parking','meals','other','otherDesc','taxEnabled','taxRate','notes'];
+function currentRecord(){
+ const c=calc();
+ const fields={};fieldIds.forEach(id=>fields[id]=$(id).value);
+ return {id: (typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(16).slice(2),
+   savedAt:new Date().toISOString(),trip,wait,fields,final:c.final,subtotal:c.subtotal};
+}
+function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]')}catch(e){return []}}
+function putHistory(items){try{localStorage.setItem(HISTORY_KEY,JSON.stringify(items));renderHistory();return true}catch(e){alert('Não foi possível salvar. O armazenamento do navegador pode estar cheio ou bloqueado.');return false}}
+function renderHistory(){
+ const list=$('historyList'),items=getHistory();
+ if(!items.length){list.innerHTML='<p class="empty-history">Nenhuma viagem salva ainda.</p>';return}
+ list.innerHTML=items.slice().reverse().map(item=>{
+  const f=item.fields||{},name=f.client||'Cliente não informado',route=[f.origin||'Origem?',f.destination||'Destino?'].join(' → ');
+  const date=f.date?new Date(f.date+'T12:00:00').toLocaleDateString('pt-BR'):'Sem data';
+  return `<article class="history-item"><div class="history-top"><div><strong>${escapeHtml(name)}</strong><small>${escapeHtml(route)} · ${date}</small></div><strong>${brl(Number(item.final)||0)}</strong></div><div class="history-actions"><button data-load="${escapeHtml(item.id)}">Editar / carregar</button><button class="delete" data-delete="${escapeHtml(item.id)}">Excluir</button></div></article>`;
+ }).join('');
+ list.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>loadRecord(b.dataset.load));
+ list.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteRecord(b.dataset.delete));
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function loadRecord(id){
+ const item=getHistory().find(x=>x.id===id);if(!item)return;
+ fieldIds.forEach(key=>{if(item.fields&&item.fields[key]!==undefined)$(key).value=item.fields[key]});
+ trip=item.trip||'one';wait=item.wait||'none';
+ document.querySelectorAll('[data-trip]').forEach(b=>b.classList.toggle('active',b.dataset.trip===trip));
+ document.querySelectorAll('[data-wait]').forEach(b=>b.classList.toggle('active',b.dataset.wait===wait));
+ $('taxBox').classList.toggle('hidden',$('taxEnabled').value!=='yes');
+ $('waitHoursBox').classList.toggle('hidden',wait!=='hourly');$('waitRateBox').classList.toggle('hidden',wait!=='hourly');$('waitFixedBox').classList.toggle('hidden',wait!=='fixed');
+ calc();window.scrollTo({top:0,behavior:'smooth'});
+ $('saveTrip').textContent='Salvar alterações no histórico';
+ $('saveTrip').dataset.editing=id;
+}
+function deleteRecord(id){
+ if(!confirm('Excluir esta viagem do histórico?'))return;
+ putHistory(getHistory().filter(x=>x.id!==id));
+ if($('saveTrip').dataset.editing===id){delete $('saveTrip').dataset.editing;$('saveTrip').textContent='＋ Salvar orçamento no histórico'}
+}
+$('saveTrip').onclick=()=>{
+ const record=currentRecord(),editing=$('saveTrip').dataset.editing;
+ const items=getHistory();
+ if(editing){const index=items.findIndex(x=>x.id===editing);if(index>=0){record.id=editing;items[index]=record}else items.push(record);delete $('saveTrip').dataset.editing;$('saveTrip').textContent='＋ Salvar orçamento no histórico'}
+ else items.push(record);
+ if(putHistory(items))alert('Orçamento salvo no histórico deste navegador.');
+};
+renderHistory();
+
 $('date').value=new Date().toISOString().slice(0,10);calc();

@@ -33,7 +33,7 @@
 <article class="card"><h3>Imposto / emissão de nota</h3><div class="fields">
 <label>Adicionar percentual?<select id="taxEnabled"><option value="no">Não</option><option value="yes">Sim</option></select></label>
 <label id="taxBox" class="hidden">Percentual de imposto (%)<div class="suffix"><input id="taxRate" type="number" min="0" max="99.99" step=".01" value="0"><b>%</b></div></label></div>
-<p class="hint">O imposto é calculado por dentro: subtotal ÷ (1 − percentual). Exemplo: R$ 100,00 ÷ 0,90 = R$ 111,11 com 10%.</p></article>
+<p class="hint">O imposto é calculado por dentro: valor-base ÷ (1 − alíquota). Ex.: R$ 100 ÷ 0,99 (1%) = R$ 101,01; ÷ 0,98 (2%) = R$ 102,04; ÷ 0,97 (3%) = R$ 103,09; ÷ 0,96 (4%) = R$ 104,17; ÷ 0,95 (5%) = R$ 105,26. E assim sucessivamente.</p></article>
 <article class="card"><h3>Observações da proposta</h3><label class="wide">Condições e informações adicionais<textarea id="notes" rows="3" placeholder="Validade do orçamento, condições, horários..."></textarea></label></article>
 </section>
 <aside><div class="heading"><div><h2>Resumo</h2><p>Atualizado automaticamente.</p></div><b>02</b></div>
@@ -43,6 +43,10 @@
 <div class="row"><span>Tempo de espera</span><b id="sWait">R$ 0,00</b></div><div class="row"><span>Pedágios e demais despesas</span><b id="sExtras">R$ 0,00</b></div>
 <div class="row subtotal"><span>Subtotal antes do imposto</span><b id="sSubtotal">R$ 0,00</b></div><div class="row"><span id="taxLabel">Imposto (0%)</span><b id="sTax">R$ 0,00</b></div>
 <div class="row finalrow"><span>Total a apresentar</span><b id="sFinal">R$ 0,00</b></div><p id="formula" class="formula">Preencha os parâmetros para calcular.</p></article>
-<button id="pdf" class="primary">⇩ Gerar orçamento em PDF</button><button id="clear" class="secondary">Limpar orçamento</button><p class="footnote">O cálculo ocorre neste dispositivo. Nenhum dado é enviado automaticamente.</p>
+<button id="saveTrip" class="primary">＋ Salvar orçamento no histórico</button>
+<button id="pdf" class="secondary">⇩ Gerar orçamento em PDF</button><button id="clear" class="secondary">Limpar orçamento</button>
+<section class="history card"><h3>Histórico de viagens confirmadas</h3>
+<p class="hint">Salve somente os orçamentos que desejar. Você poderá carregar para editar ou excluir quando quiser.</p>
+<div id="historyList" class="history-list"><p class="empty-history">Nenhuma viagem salva ainda.</p></div></section><p class="footnote">O cálculo ocorre neste dispositivo. Nenhum dado é enviado automaticamente.</p>
 </aside></div></main><footer>FELMOR TRANSPORTE DE EMPRESAS · ORÇAMENTO CORPORATIVO</footer>
 <script src="js/app.js"></script></body></html>
