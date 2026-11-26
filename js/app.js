@@ -326,7 +326,53 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
         printWindow.document.close();
     }
 
+
+    let currentStep = 1;
+
+    function showStep(step) {
+        const totalSteps = document.querySelectorAll('.wizard-step').length;
+        currentStep = Math.max(1, Math.min(totalSteps, step));
+
+        document.querySelectorAll('.wizard-step').forEach(section => {
+            const isActive = Number(section.dataset.step) === currentStep;
+            section.classList.toggle('active', isActive);
+            section.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        });
+
+        document.querySelectorAll('.progress-step').forEach(item => {
+            const number = Number(item.dataset.progress);
+            item.classList.toggle('current', number === currentStep);
+            item.classList.toggle('completed', number < currentStep);
+        });
+
+        const progressFill = $('progressFill');
+        if (progressFill) {
+            progressFill.style.width = `${((currentStep - 1) / Math.max(1, totalSteps - 1)) * 100}%`;
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function bindWizardNavigation() {
+        document.querySelectorAll('.wizard-next').forEach(button => {
+            button.type = 'button';
+            button.addEventListener('click', event => {
+                event.preventDefault();
+                showStep(currentStep + 1);
+            });
+        });
+
+        document.querySelectorAll('.wizard-back').forEach(button => {
+            button.type = 'button';
+            button.addEventListener('click', event => {
+                event.preventDefault();
+                showStep(currentStep - 1);
+            });
+        });
+    }
+
     function init() {
+        bindWizardNavigation();
         // Garante que os botões principais tenham seus eventos vinculados.
         $('saveTrip').addEventListener('click', saveTrip);
         $('pdf').addEventListener('click', generatePdf);
@@ -372,6 +418,7 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
 
         renderHistory();
         calc();
+        showStep(1);
     }
 
     if (document.readyState === 'loading') {
