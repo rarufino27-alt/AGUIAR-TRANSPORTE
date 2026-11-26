@@ -1,52 +1,583 @@
+
 <!doctype html>
-<html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f4f6f9"><title>Aguiar Transporte de Empresas</title>
-<link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="css/layout.css"><link rel="stylesheet" href="css/components.css">
-</head><body>
-<header class="header"><div class="headrow"><div class="brand"><b>AGUIAR</b><small>TRANSPORTE DE EMPRESAS</small></div><button id="theme" class="theme">☾ Modo escuro</button></div>
-<div class="hero"><span>SOLUÇÕES CORPORATIVAS</span><h1>Orçamento de viagem</h1><p>Calcule custos, organize despesas e apresente uma proposta profissional.</p></div></header>
-<main class="wrap"><div class="grid">
-<section>
-<div class="heading"><div><h2>Dados da viagem</h2><p>Identificação e parâmetros de cobrança.</p></div><b>01</b></div>
-<article class="card"><h3>Identificação</h3><div class="fields">
-<label class="wide">Empresa / cliente<input id="client" placeholder="Nome da empresa ou responsável"></label>
-<label>Data da viagem<input id="date" type="date"></label><label>Finalidade<input id="purpose" placeholder="Ex.: visita técnica"></label>
-<label>Origem<input id="origin" placeholder="Cidade / endereço"></label><label>Destino<input id="destination" placeholder="Cidade / endereço"></label></div></article>
-<article class="card"><h3>Distância e percurso</h3><div class="fields">
-<label>Distância de ida (km)<input id="km" type="number" min="0" step=".1" value="0"></label><label>Tempo de percurso de ida (h)<input id="hours" type="number" min="0" step=".1" value="0"></label>
-<div class="wide"><span class="label">Modalidade</span><div class="segments"><button class="seg active" data-trip="one">Somente ida</button><button class="seg" data-trip="round">Ida e volta</button></div><small>Ida e volta duplica automaticamente a distância e o tempo de percurso.</small></div></div></article>
-<article class="card"><h3>Tarifas de percurso</h3><div class="fields">
-<label>Valor por quilômetro (R$/km)<div class="prefix"><b>R$</b><input id="rateKm" type="number" min="0" step=".01" value="0"></div></label>
-<label>Valor por hora (R$/h)<div class="prefix"><b>R$</b><input id="rateHour" type="number" min="0" step=".01" value="0"></div></label></div></article>
-<article class="card"><h3>Tempo de espera</h3><div class="fields">
-<div class="wide"><span class="label">Forma de cobrança</span><div class="segments"><button class="seg active" data-wait="hourly">Por hora</button><button class="seg" data-wait="fixed">Valor fixo</button><button class="seg" data-wait="none">Sem espera</button></div></div>
-<label id="waitHoursBox">Horas de espera<input id="waitHours" type="number" min="0" step=".25" value="0"></label>
-<label id="waitRateBox">Valor por hora de espera<div class="prefix"><b>R$</b><input id="waitRate" type="number" min="0" step=".01" value="0"></div></label>
-<label id="waitFixedBox" class="wide hidden">Valor total estipulado<div class="prefix"><b>R$</b><input id="waitFixed" type="number" min="0" step=".01" value="0"></div></label></div></article>
-<article class="card"><h3>Pedágios e outros custos</h3><p class="hint">Informe manualmente o valor total previsto para a viagem. Em ida e volta, some os dois sentidos antes de preencher.</p><div class="fields">
-<label>Pedágios<div class="prefix"><b>R$</b><input id="tolls" type="number" min="0" step=".01" value="0"></div></label>
-<label>Estacionamento<div class="prefix"><b>R$</b><input id="parking" type="number" min="0" step=".01" value="0"></div></label>
-<label>Alimentação / diária<div class="prefix"><b>R$</b><input id="meals" type="number" min="0" step=".01" value="0"></div></label>
-<label>Outros custos<div class="prefix"><b>R$</b><input id="other" type="number" min="0" step=".01" value="0"></div></label>
-<label class="wide">Descrição de outros custos<input id="otherDesc" placeholder="Ex.: balsa, hospedagem, taxa de acesso"></label></div></article>
-<article class="card"><h3>Imposto / emissão de nota</h3><div class="fields">
-<label>Adicionar percentual?<select id="taxEnabled"><option value="no">Não</option><option value="yes">Sim</option></select></label>
-<label id="taxBox" class="hidden">Percentual de imposto (%)<div class="suffix"><input id="taxRate" type="number" min="0" max="99.99" step=".01" value="0"><b>%</b></div></label></div>
-<p class="hint">O imposto é calculado por dentro: valor-base ÷ (1 − alíquota). Ex.: R$ 100 ÷ 0,99 (1%) = R$ 101,01; ÷ 0,98 (2%) = R$ 102,04; ÷ 0,97 (3%) = R$ 103,09; ÷ 0,96 (4%) = R$ 104,17; ÷ 0,95 (5%) = R$ 105,26. E assim sucessivamente.</p></article>
-<article class="card"><h3>Observações da proposta</h3><label class="wide">Condições e informações adicionais<textarea id="notes" rows="3" placeholder="Validade do orçamento, condições, horários..."></textarea></label></article>
-</section>
-<aside><div class="heading"><div><h2>Resumo</h2><p>Atualizado automaticamente.</p></div><b>02</b></div>
-<article class="summary"><span class="overline">VALOR FINAL DA VIAGEM</span><div id="final" class="total">R$ 0,00</div><small id="tripLabel">Somente ida</small><hr>
-<div class="row"><span>Distância considerada</span><b id="sKm">0 km</b></div><div class="row"><span>Tempo de percurso</span><b id="sHours">0 h</b></div>
-<div class="row"><span>Custo por km</span><b id="sKmCost">R$ 0,00</b></div><div class="row"><span>Custo por hora</span><b id="sHourCost">R$ 0,00</b></div>
-<div class="row"><span>Tempo de espera</span><b id="sWait">R$ 0,00</b></div><div class="row"><span>Pedágios e demais despesas</span><b id="sExtras">R$ 0,00</b></div>
-<div class="row subtotal"><span>Subtotal antes do imposto</span><b id="sSubtotal">R$ 0,00</b></div><div class="row"><span id="taxLabel">Imposto (0%)</span><b id="sTax">R$ 0,00</b></div>
-<div class="row finalrow"><span>Total a apresentar</span><b id="sFinal">R$ 0,00</b></div><p id="formula" class="formula">Preencha os parâmetros para calcular.</p></article>
-<button id="saveTrip" class="primary">＋ Salvar orçamento no histórico</button>
-<button id="pdf" class="secondary">⇩ Gerar orçamento em PDF</button><button id="clear" class="secondary">Limpar orçamento</button>
-<section class="history card"><h3>Histórico de viagens confirmadas</h3>
-<p class="hint">Salve somente os orçamentos que desejar. Você poderá carregar para editar ou excluir quando quiser.</p>
-<div id="historyList" class="history-list"><p class="empty-history">Nenhuma viagem salva ainda.</p></div></section><p class="footnote">O cálculo ocorre neste dispositivo. Nenhum dado é enviado automaticamente.</p>
-</aside></div></main><footer>AGUIAR TRANSPORTE DE EMPRESAS · ORÇAMENTO CORPORATIVO</footer>
-<script src="js/app.js"></script></body></html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6f9">
+
+    <title>Aguiar Transporte de Empresas</title>
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+
+<body>
+
+    <header class="header">
+
+        <div class="headrow">
+
+            <div class="brand">
+                <b>AGUIAR</b>
+                <small>TRANSPORTE DE EMPRESAS</small>
+            </div>
+
+            <button id="theme" class="theme">
+                ☾ Modo escuro
+            </button>
+
+        </div>
+
+        <div class="hero">
+            <span>SOLUÇÕES CORPORATIVAS</span>
+
+            <h1>Orçamento de viagem</h1>
+
+            <p>
+                Calcule custos, organize despesas e apresente uma proposta profissional.
+            </p>
+        </div>
+
+    </header>
+
+
+    <main class="wrap">
+
+        <div class="grid">
+
+            <section>
+
+                <div class="heading">
+                    <div>
+                        <h2>Dados da viagem</h2>
+                        <p>Identificação e parâmetros de cobrança.</p>
+                    </div>
+
+                    <b>01</b>
+                </div>
+
+
+                <!-- IDENTIFICAÇÃO -->
+
+                <article class="card">
+
+                    <h3>Identificação</h3>
+
+                    <div class="fields">
+
+                        <label class="wide">
+                            Empresa / cliente
+                            <input
+                                id="client"
+                                placeholder="Nome da empresa ou responsável"
+                            >
+                        </label>
+
+                        <label>
+                            Data da viagem
+                            <input id="date" type="date">
+                        </label>
+
+                        <label>
+                            Finalidade
+                            <input
+                                id="purpose"
+                                placeholder="Ex.: visita técnica"
+                            >
+                        </label>
+
+                        <label>
+                            Origem
+                            <input
+                                id="origin"
+                                placeholder="Cidade / endereço"
+                            >
+                        </label>
+
+                        <label>
+                            Destino
+                            <input
+                                id="destination"
+                                placeholder="Cidade / endereço"
+                            >
+                        </label>
+
+                    </div>
+
+                </article>
+
+
+                <!-- DISTÂNCIA E PERCURSO -->
+
+                <article class="card">
+
+                    <h3>Distância e percurso</h3>
+
+                    <div class="fields">
+
+                        <label>
+                            Distância de ida (km)
+                            <input
+                                id="km"
+                                type="number"
+                                min="0"
+                                step=".1"
+                                value="0"
+                            >
+                        </label>
+
+                        <label>
+                            Tempo de percurso de ida (h)
+                            <input
+                                id="hours"
+                                type="number"
+                                min="0"
+                                step=".1"
+                                value="0"
+                            >
+                        </label>
+
+                        <div class="wide">
+
+                            <span class="label">Modalidade</span>
+
+                            <div class="segments">
+                                <button class="seg active" data-trip="one">
+                                    Somente ida
+                                </button>
+
+                                <button class="seg" data-trip="round">
+                                    Ida e volta
+                                </button>
+                            </div>
+
+                            <small>
+                                Ida e volta duplica automaticamente a distância e o tempo de percurso.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- TARIFAS DE PERCURSO -->
+
+                <article class="card">
+
+                    <h3>Tarifas de percurso</h3>
+
+                    <div class="fields">
+
+                        <label>
+                            Valor por quilômetro (R$/km)
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="rateKm"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label>
+                            Valor por hora (R$/h)
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="rateHour"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                    </div>
+
+                </article>
+
+
+                <!-- TEMPO DE ESPERA -->
+
+                <article class="card">
+
+                    <h3>Tempo de espera</h3>
+
+                    <div class="fields">
+
+                        <div class="wide">
+
+                            <span class="label">Forma de cobrança</span>
+
+                            <div class="segments">
+
+                                <button class="seg active" data-wait="hourly">
+                                    Por hora
+                                </button>
+
+                                <button class="seg" data-wait="fixed">
+                                    Valor fixo
+                                </button>
+
+                                <button class="seg" data-wait="none">
+                                    Sem espera
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <label id="waitHoursBox">
+                            Horas de espera
+                            <input
+                                id="waitHours"
+                                type="number"
+                                min="0"
+                                step=".25"
+                                value="0"
+                            >
+                        </label>
+
+                        <label id="waitRateBox">
+                            Valor por hora de espera
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="waitRate"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label id="waitFixedBox" class="wide hidden">
+                            Valor total estipulado
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="waitFixed"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PEDÁGIOS E OUTROS CUSTOS -->
+
+                <article class="card">
+
+                    <h3>Pedágios e outros custos</h3>
+
+                    <p class="hint">
+                        Informe manualmente o valor total previsto para a viagem.
+                        Em ida e volta, some os dois sentidos antes de preencher.
+                    </p>
+
+                    <div class="fields">
+
+                        <label>
+                            Pedágios
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="tolls"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label>
+                            Estacionamento
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="parking"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label>
+                            Alimentação / diária
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="meals"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label>
+                            Outros custos
+
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input
+                                    id="other"
+                                    type="number"
+                                    min="0"
+                                    step=".01"
+                                    value="0"
+                                >
+                            </div>
+                        </label>
+
+                        <label class="wide">
+                            Descrição de outros custos
+                            <input
+                                id="otherDesc"
+                                placeholder="Ex.: balsa, hospedagem, taxa de acesso"
+                            >
+                        </label>
+
+                    </div>
+
+                </article>
+
+
+                <!-- IMPOSTO -->
+
+                <article class="card">
+
+                    <h3>Imposto / emissão de nota</h3>
+
+                    <div class="fields">
+
+                        <label>
+                            Adicionar percentual?
+
+                            <select id="taxEnabled">
+                                <option value="no">Não</option>
+                                <option value="yes">Sim</option>
+                            </select>
+                        </label>
+
+                        <label id="taxBox" class="hidden">
+                            Percentual de imposto (%)
+
+                            <div class="suffix">
+                                <input
+                                    id="taxRate"
+                                    type="number"
+                                    min="0"
+                                    max="99.99"
+                                    step=".01"
+                                    value="0"
+                                >
+                                <b>%</b>
+                            </div>
+                        </label>
+
+                    </div>
+
+                    <p class="hint">
+                        O imposto é calculado por dentro: valor-base ÷ (1 − alíquota).
+                        Ex.: R$ 100 ÷ 0,99 (1%) = R$ 101,01;
+                        ÷ 0,98 (2%) = R$ 102,04;
+                        ÷ 0,97 (3%) = R$ 103,09;
+                        ÷ 0,96 (4%) = R$ 104,17;
+                        ÷ 0,95 (5%) = R$ 105,26.
+                        E assim sucessivamente.
+                    </p>
+
+                </article>
+
+
+                <!-- OBSERVAÇÕES -->
+
+                <article class="card">
+
+                    <h3>Observações da proposta</h3>
+
+                    <label class="wide">
+                        Condições e informações adicionais
+
+                        <textarea
+                            id="notes"
+                            rows="3"
+                            placeholder="Validade do orçamento, condições, horários..."
+                        ></textarea>
+                    </label>
+
+                </article>
+
+            </section>
+
+
+            <!-- RESUMO DO ORÇAMENTO -->
+
+            <aside>
+
+                <div class="heading">
+
+                    <div>
+                        <h2>Resumo</h2>
+                        <p>Atualizado automaticamente.</p>
+                    </div>
+
+                    <b>02</b>
+
+                </div>
+
+
+                <article class="summary">
+
+                    <span class="overline">
+                        VALOR FINAL DA VIAGEM
+                    </span>
+
+                    <div id="final" class="total">
+                        R$ 0,00
+                    </div>
+
+                    <small id="tripLabel">
+                        Somente ida
+                    </small>
+
+                    <hr>
+
+                    <div class="row">
+                        <span>Distância considerada</span>
+                        <b id="sKm">0 km</b>
+                    </div>
+
+                    <div class="row">
+                        <span>Tempo de percurso</span>
+                        <b id="sHours">0 h</b>
+                    </div>
+
+                    <div class="row">
+                        <span>Custo por km</span>
+                        <b id="sKmCost">R$ 0,00</b>
+                    </div>
+
+                    <div class="row">
+                        <span>Custo por hora</span>
+                        <b id="sHourCost">R$ 0,00</b>
+                    </div>
+
+                    <div class="row">
+                        <span>Tempo de espera</span>
+                        <b id="sWait">R$ 0,00</b>
+                    </div>
+
+                    <div class="row">
+                        <span>Pedágios e demais despesas</span>
+                        <b id="sExtras">R$ 0,00</b>
+                    </div>
+
+                    <div class="row subtotal">
+                        <span>Subtotal antes do imposto</span>
+                        <b id="sSubtotal">R$ 0,00</b>
+                    </div>
+
+                    <div class="row">
+                        <span id="taxLabel">Imposto (0%)</span>
+                        <b id="sTax">R$ 0,00</b>
+                    </div>
+
+                    <div class="row finalrow">
+                        <span>Total a apresentar</span>
+                        <b id="sFinal">R$ 0,00</b>
+                    </div>
+
+                    <p id="formula" class="formula">
+                        Preencha os parâmetros para calcular.
+                    </p>
+
+                </article>
+
+
+                <!-- AÇÕES -->
+
+                <button id="saveTrip" class="primary">
+                    ＋ Salvar orçamento no histórico
+                </button>
+
+                <button id="pdf" class="secondary">
+                    ⇩ Gerar orçamento em PDF
+                </button>
+
+                <button id="clear" class="secondary">
+                    Limpar orçamento
+                </button>
+
+
+                <!-- HISTÓRICO -->
+
+                <section class="history card">
+
+                    <h3>Histórico de viagens confirmadas</h3>
+
+                    <p class="hint">
+                        Salve somente os orçamentos que desejar.
+                        Você poderá carregar para editar ou excluir quando quiser.
+                    </p>
+
+                    <div id="historyList" class="history-list">
+
+                        <p class="empty-history">
+                            Nenhuma viagem salva ainda.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <p class="footnote">
+                    O cálculo ocorre neste dispositivo.
+                    Nenhum dado é enviado automaticamente.
+                </p>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <footer>
+        AGUIAR TRANSPORTE DE EMPRESAS · ORÇAMENTO CORPORATIVO
+    </footer>
+
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
