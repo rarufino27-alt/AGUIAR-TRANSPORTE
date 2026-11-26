@@ -1,2 +1,40 @@
 .card,.summary{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:15px;box-shadow:var(--shadow);animation:rise .35s ease both}.card h3{font-size:13px;margin:0 0 17px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.fields label,.wide{min-width:0;display:flex;flex-direction:column;gap:7px;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}.wide{grid-column:1/-1}.fields input,.fields select,textarea,.card>label textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--text);outline:none;font-size:13px;text-transform:none;letter-spacing:normal}.fields input:focus,.fields select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #ed742b25}.prefix,.suffix{display:flex;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:10px;overflow:hidden}.prefix b,.suffix b{padding:0 11px;color:var(--muted)}.prefix input,.suffix input{border:0;border-radius:0;background:transparent}.segments{display:flex;flex-wrap:wrap;gap:7px}.seg{border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--muted);padding:10px 12px;font-size:11px;font-weight:800}.seg.active{border-color:var(--gold);background:var(--goldsoft);color:var(--text)}.hint,small{font-size:11px;color:var(--muted);line-height:1.5}.hint{margin:10px 0 0}.hidden{display:none!important}.summary .overline{font-size:9px;letter-spacing:1px;font-weight:900;color:var(--muted)}.total{font-size:clamp(34px,5vw,45px);font-weight:900;letter-spacing:-1px;color:var(--navy);margin:9px 0 2px}.summary hr{border:0;border-top:1px solid var(--line);margin:17px 0 9px}.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:11px;color:var(--muted)}.row b{color:var(--text);text-align:right}.subtotal{border-top:1px dashed var(--line);margin-top:6px;padding-top:13px}.finalrow{border-top:1px solid var(--line);margin-top:5px;padding-top:13px;font-weight:900;color:var(--text)}.finalrow b{font-size:15px;color:var(--gold)}.formula{font-size:10px;line-height:1.5;padding:10px;background:var(--soft);border-radius:9px;color:var(--muted)}.primary,.secondary{width:100%;border-radius:11px;padding:15px;margin-top:11px;font-weight:900;transition:transform .2s}.primary{border:0;background:linear-gradient(110deg,#ffad73,#ed742b);color:#ffffff}.secondary{border:1px solid var(--line);background:var(--surface);color:var(--muted)}.primary:hover,.secondary:hover{transform:translateY(-2px)}.footnote{text-align:center;font-size:10px;color:var(--muted);line-height:1.5}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@media(max-width:520px){.fields{grid-template-columns:1fr}.wide{grid-column:auto}.card,.summary{padding:16px}}@media print{body{background:white!important;color:#17263b!important}.header{background:white!important;color:#17263b!important}.hero p,.brand small{color:#526276!important}.wrap{margin:0;padding:0}.grid{display:block}section,.heading,footer,.theme,.primary,.secondary,.footnote{display:none!important}aside{position:static}.summary{box-shadow:none;border:1px solid #ddd}.summary:before{content:"FELMOR TRANSPORTE DE EMPRESAS — ORÇAMENTO";font-size:12px;font-weight:900}.row,.row b,.formula{color:#27384c!important}.total{color:#17395f!important}}
 .history{margin-top:18px}.history-list{display:grid;gap:10px;margin-top:12px}.history-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft)}.history-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-item strong{font-size:12px}.history-item small{display:block;margin-top:4px}.history-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.history-actions button{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--surface);color:var(--text);font-size:11px;font-weight:800}.history-actions .delete{color:#c43d2b}.empty-history{font-size:12px;color:var(--muted);margin:0}
+
+/* Navegação em etapas do AGUIAR TRANSPORTE */
+.wizard-wrap{max-width:900px;margin:28px auto 70px;padding:0 20px}
+.wizard-shell{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,30px);box-shadow:var(--shadow)}
+.wizard-progress{position:relative;margin:0 4px 28px}
+.progress-track{height:5px;background:var(--line);border-radius:99px;position:absolute;left:3%;right:3%;top:17px;overflow:hidden}
+#progressFill{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .25s ease}
+.progress-steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative;z-index:1;gap:4px}
+.progress-step{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;color:var(--muted);min-width:0}
+.progress-step span{width:35px;height:35px;display:grid;place-items:center;border-radius:50%;background:var(--soft);border:2px solid var(--line);font-size:12px;font-weight:900}
+.progress-step small{font-size:10px;font-weight:800;white-space:nowrap}
+.progress-step.current span,.progress-step.completed span{background:var(--gold);border-color:var(--gold);color:white}
+.progress-step.current small,.progress-step.completed small{color:var(--text)}
+.wizard-step{display:none}
+.wizard-step.active{display:block;animation:wizardIn .22s ease both}
+.step-heading{margin:0 0 20px}
+.step-kicker{font-size:10px;font-weight:900;letter-spacing:1.4px;color:var(--gold)}
+.step-heading h2{font-size:clamp(21px,3vw,27px);margin:7px 0;color:var(--text)}
+.step-heading p{font-size:13px;color:var(--muted);margin:0}
+.wizard-step>.card{margin-bottom:0;box-shadow:none}
+.wizard-navigation{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px}
+.wizard-navigation button{min-width:125px;width:auto;margin:0}
+.wizard-navigation button:disabled{opacity:.45;cursor:not-allowed}
+.wizard-finish-note{font-size:11px;color:var(--muted)}
+.review-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+.review-actions button{width:100%;margin:0}
+.wizard-step .summary{margin-bottom:0}
+.wizard-step .history{margin-top:18px}
+@keyframes wizardIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){
+ .wizard-wrap{padding:0 12px;margin-top:16px}
+ .wizard-shell{padding:15px 12px;border-radius:15px}
+ .progress-step span{width:29px;height:29px;font-size:10px}
+ .progress-track{top:14px}
+ .progress-step small{font-size:8px;white-space:normal;line-height:1.1}
+ .review-actions{grid-template-columns:1fr}
+ .wizard-navigation button{min-width:0;flex:1}
+}

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f4f6f9">
 
-    <title>Aguiar Transporte de Empresas</title>
+    <title>AGUIAR TRANSPORTE</title>
 
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -43,25 +43,28 @@
     </header>
 
 
-    <main class="wrap">
-
-        <div class="grid">
-
-            <section>
-
-                <div class="heading">
-                    <div>
-                        <h2>Dados da viagem</h2>
-                        <p>Identificação e parâmetros de cobrança.</p>
-                    </div>
-
-                    <b>01</b>
-                </div>
-
-
-                <!-- IDENTIFICAÇÃO -->
-
-                <article class="card">
+    <main class="wrap wizard-wrap">
+    <div class="wizard-shell">
+        <nav class="wizard-progress" aria-label="Progresso do orçamento">
+<div class="progress-track"><span id="progressFill"></span></div>
+<div class="progress-steps">
+<div class="progress-step current" data-progress="1"><span>1</span><small>Cliente</small></div>
+<div class="progress-step" data-progress="2"><span>2</span><small>Percurso</small></div>
+<div class="progress-step" data-progress="3"><span>3</span><small>Tarifas</small></div>
+<div class="progress-step" data-progress="4"><span>4</span><small>Espera</small></div>
+<div class="progress-step" data-progress="5"><span>5</span><small>Despesas</small></div>
+<div class="progress-step" data-progress="6"><span>6</span><small>Imposto</small></div>
+<div class="progress-step" data-progress="7"><span>7</span><small>Revisão</small></div>
+</div></nav>
+        <div id="wizardSteps">
+            
+    <section class="wizard-step active" data-step="1" aria-hidden="false">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 1 DE 7</span>
+            <h2>Quem está solicitando a viagem?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
 
                     <h3>Identificação</h3>
 
@@ -88,15 +91,32 @@
                             >
                         </label>
 
-                        <label>
-                            Origem
-                            <input
-                                id="origin"
-                                placeholder="Cidade / endereço"
-                            >
-                        </label>
+                        
 
-                        <label>
+                        
+
+                    </div>
+
+                </article>
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" disabled>← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="2" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 2 DE 7</span>
+            <h2>De onde sairemos e para onde vamos?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
+
+                    <h3>Distância e percurso</h3>
+
+                    <div class="fields">
+
+<label>
                             Destino
                             <input
                                 id="destination"
@@ -104,18 +124,13 @@
                             >
                         </label>
 
-                    </div>
-
-                </article>
-
-
-                <!-- DISTÂNCIA E PERCURSO -->
-
-                <article class="card">
-
-                    <h3>Distância e percurso</h3>
-
-                    <div class="fields">
+<label>
+                            Origem
+                            <input
+                                id="origin"
+                                placeholder="Cidade / endereço"
+                            >
+                        </label>
 
                         <label>
                             Distância de ida (km)
@@ -162,11 +177,19 @@
                     </div>
 
                 </article>
-
-
-                <!-- TARIFAS DE PERCURSO -->
-
-                <article class="card">
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="3" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 3 DE 7</span>
+            <h2>Como será calculado o deslocamento?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
 
                     <h3>Tarifas de percurso</h3>
 
@@ -205,11 +228,19 @@
                     </div>
 
                 </article>
-
-
-                <!-- TEMPO DE ESPERA -->
-
-                <article class="card">
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="4" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 4 DE 7</span>
+            <h2>Haverá tempo de espera?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
 
                     <h3>Tempo de espera</h3>
 
@@ -281,11 +312,19 @@
                     </div>
 
                 </article>
-
-
-                <!-- PEDÁGIOS E OUTROS CUSTOS -->
-
-                <article class="card">
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="5" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 5 DE 7</span>
+            <h2>Quais custos adicionais devemos considerar?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
 
                     <h3>Pedágios e outros custos</h3>
 
@@ -367,11 +406,19 @@
                     </div>
 
                 </article>
-
-
-                <!-- IMPOSTO -->
-
-                <article class="card">
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="6" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 6 DE 7</span>
+            <h2>Deseja incluir imposto no orçamento?</h2>
+            <p>Preencha as informações abaixo para continuar.</p>
+        </div>
+        <article class="card">
 
                     <h3>Imposto / emissão de nota</h3>
 
@@ -414,12 +461,7 @@
                         E assim sucessivamente.
                     </p>
 
-                </article>
-
-
-                <!-- OBSERVAÇÕES -->
-
-                <article class="card">
+                </article><article class="card">
 
                     <h3>Observações da proposta</h3>
 
@@ -434,27 +476,22 @@
                     </label>
 
                 </article>
-
-            </section>
-
-
-            <!-- RESUMO DO ORÇAMENTO -->
-
-            <aside>
-
-                <div class="heading">
-
-                    <div>
-                        <h2>Resumo</h2>
-                        <p>Atualizado automaticamente.</p>
-                    </div>
-
-                    <b>02</b>
-
-                </div>
-
-
-                <article class="summary">
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <button type="button" class="primary wizard-next">Próximo →</button>
+        </div>
+    </section>
+    
+    <section class="wizard-step" data-step="7" aria-hidden="true">
+        <div class="step-heading">
+            <span class="step-kicker">ETAPA 7 DE 7</span>
+            <h2>Confira o orçamento completo.</h2>
+            <p>Tudo pronto? Revise os dados e finalize seu orçamento.</p>
+        </div>
+        <div class="heading">
+    <div><h2>Revisão do orçamento</h2><p>Confira os valores antes de salvar ou gerar o PDF.</p></div>
+    <b>07</b>
+</div><article class="summary">
 
                     <span class="overline">
                         VALOR FINAL DA VIAGEM
@@ -520,26 +557,12 @@
                     </p>
 
                 </article>
-
-
-                <!-- AÇÕES -->
-
-                <button id="saveTrip" class="primary">
-                    ＋ Salvar orçamento no histórico
-                </button>
-
-                <button id="pdf" class="secondary">
-                    ⇩ Gerar orçamento em PDF
-                </button>
-
-                <button id="clear" class="secondary">
-                    Limpar orçamento
-                </button>
-
-
-                <!-- HISTÓRICO -->
-
-                <section class="history card">
+<div class="review-actions">
+    <button id="saveTrip" class="primary" type="button">＋ Salvar orçamento no histórico</button>
+    <button id="pdf" class="secondary" type="button">⇩ Gerar orçamento em PDF</button>
+    <button id="clear" class="secondary" type="button">Limpar orçamento</button>
+</div>
+<section class="history card">
 
                     <h3>Histórico de viagens confirmadas</h3>
 
@@ -557,22 +580,21 @@
                     </div>
 
                 </section>
+<p class="footnote">O cálculo ocorre neste dispositivo. Nenhum dado é enviado automaticamente.</p>
 
-
-                <p class="footnote">
-                    O cálculo ocorre neste dispositivo.
-                    Nenhum dado é enviado automaticamente.
-                </p>
-
-            </aside>
-
+        <div class="wizard-navigation">
+            <button type="button" class="secondary wizard-back" >← Voltar</button>
+            <span class="wizard-finish-note">Você chegou à revisão final.</span>
         </div>
-
-    </main>
+    </section>
+    
+        </div>
+    </div>
+</main>
 
 
     <footer>
-        AGUIAR TRANSPORTE DE EMPRESAS · ORÇAMENTO CORPORATIVO
+        AGUIAR TRANSPORTE · ORÇAMENTO CORPORATIVO
     </footer>
 
 
