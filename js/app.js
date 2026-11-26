@@ -10,13 +10,15 @@
 
     let trip = 'one';
     let wait = 'hourly';
+    let quoteType = 'people';
+    let purchasePhotoData = '';
     const HISTORY_KEY = 'felmor-company-confirmed-trips-v1';
     const fieldIds = [
         'client', 'date', 'purpose', 'origin', 'destination',
         'km', 'hours', 'rateKm', 'rateHour',
         'waitHours', 'waitRate', 'waitFixed',
         'tolls', 'parking', 'meals', 'other', 'otherDesc',
-        'taxEnabled', 'taxRate', 'notes'
+        'taxEnabled', 'taxRate', 'notes', 'laborCost', 'purchaseValue'
     ];
 
     function calc() {
@@ -33,7 +35,9 @@
                 : 0;
 
         const extras = n('tolls') + n('parking') + n('meals') + n('other');
-        const subtotal = kmCost + hourCost + waitCost + extras;
+        const laborCost = quoteType === 'materials' ? n('laborCost') : 0;
+        const purchaseValue = quoteType === 'purchases' ? n('purchaseValue') : 0;
+        const subtotal = kmCost + hourCost + waitCost + extras + laborCost + purchaseValue;
         const taxOn = $('taxEnabled').value === 'yes';
         const rate = taxOn ? Math.min(n('taxRate'), 99.99) : 0;
         const final = taxOn ? subtotal / (1 - rate / 100) : subtotal;
@@ -47,6 +51,10 @@
         $('sHourCost').textContent = brl(hourCost);
         $('sWait').textContent = brl(waitCost);
         $('sExtras').textContent = brl(extras);
+        $('sLabor').textContent = brl(laborCost);
+        $('sPurchase').textContent = brl(purchaseValue);
+        $('sLaborRow').classList.toggle('hidden', quoteType !== 'materials');
+        $('sPurchaseRow').classList.toggle('hidden', quoteType !== 'purchases');
         $('sSubtotal').textContent = brl(subtotal);
         $('taxLabel').textContent = `Imposto (${rate.toLocaleString('pt-BR')}%)`;
         $('sTax').textContent = brl(tax);
@@ -56,7 +64,7 @@
             ? `${brl(subtotal)} ÷ ${(1 - rate / 100).toLocaleString('pt-BR', { maximumFractionDigits: 4 })} = ${brl(final)}. Cálculo por dentro.`
             : `Subtotal: ${brl(subtotal)}. ${taxOn ? 'Alíquota igual a zero.' : 'Sem imposto.'}`;
 
-        return { km, hours, kmCost, hourCost, waitCost, extras, subtotal, rate, tax, final };
+        return { km, hours, kmCost, hourCost, waitCost, extras, laborCost, purchaseValue, subtotal, rate, tax, final };
     }
 
     function setTrip(value) {
@@ -110,6 +118,7 @@
             const fields = item.fields || {};
             const name = fields.client || 'Cliente não informado';
             const route = [fields.origin || 'Origem?', fields.destination || 'Destino?'].join(' → ');
+            const typeLabel = item.quoteType === 'materials' ? 'Materiais' : item.quoteType === 'purchases' ? 'Compras' : 'Pessoas';
             const date = fields.date
                 ? new Date(fields.date + 'T12:00:00').toLocaleDateString('pt-BR')
                 : 'Sem data';
@@ -119,7 +128,7 @@
                     <div class="history-top">
                         <div>
                             <strong>${safe(name)}</strong>
-                            <small>${safe(route)} · ${date}</small>
+                            <small>${safe(typeLabel)} · ${safe(route)} · ${date}</small>
                         </div>
                         <strong>${brl(item.final)}</strong>
                     </div>
@@ -165,6 +174,8 @@
             savedAt: new Date().toISOString(),
             trip,
             wait,
+            quoteType,
+            purchasePhotoData,
             fields,
             final: result.final,
             subtotal: result.subtotal
@@ -205,6 +216,13 @@
             }
         });
 
+        quoteType = record.quoteType || 'people';
+        purchasePhotoData = record.purchasePhotoData || '';
+        $('quoteTypeScreen').classList.add('hidden');
+        $('wizardApp').classList.remove('hidden');
+        applyQuoteType();
+        updatePurchasePhotoPreview();
+
         setTrip(record.trip || 'one');
         setWait(record.wait || 'none');
 
@@ -239,6 +257,11 @@
         });
 
         $('notes').value = '';
+        $('laborCost').value = '0';
+        $('purchaseValue').value = '0';
+        $('purchasePhoto').value = '';
+        purchasePhotoData = '';
+        updatePurchasePhotoPreview();
         $('taxEnabled').value = 'no';
         $('taxBox').classList.add('hidden');
 
@@ -256,6 +279,7 @@
         const date = $('date').value
             ? new Date($('date').value + 'T12:00:00').toLocaleDateString('pt-BR')
             : 'Não informada';
+        const typeTitle = quoteType === 'materials' ? 'Transporte de materiais' : quoteType === 'purchases' ? 'Compras para empresa' : 'Transporte de pessoas';
         const waitDescription = wait === 'hourly'
             ? `${n('waitHours')} h × ${brl(n('waitRate'))}/h`
             : wait === 'fixed' ? 'Valor fixo estipulado' : 'Sem espera';
@@ -286,7 +310,7 @@ table{width:100%;border-collapse:collapse}
 td{padding:10px 8px;border-bottom:1px solid #eee}
 td:last-child{text-align:right;font-weight:bold}
 tr.total td{font-size:16px;font-weight:900;border-top:2px solid #ed742b;color:#e86b24}
-.notes{white-space:pre-wrap;background:#fff7f2;padding:12px;line-height:1.5}
+.receipt-photo{display:block;max-width:100%;max-height:520px;object-fit:contain;margin:8px 0 18px;border:1px solid #ddd;padding:5px}.notes{white-space:pre-wrap;background:#fff7f2;padding:12px;line-height:1.5}
 .foot{margin-top:35px;border-top:1px solid #ddd;padding-top:12px;text-align:center;color:#88766c;font-size:9px}
 @media print{body{margin:18mm}}
 </style>
@@ -296,7 +320,7 @@ tr.total td{font-size:16px;font-weight:900;border-top:2px solid #ed742b;color:#e
     <div class="brand">AGUIAR</div>
     <div class="sub">TRANSPORTE DE EMPRESAS · PROPOSTA COMERCIAL</div>
 </header>
-<h2>Orçamento de viagem corporativa</h2>
+<h2>Orçamento — ${safe(typeTitle)}</h2>
 <div class="grid">
     <div class="info"><b>CLIENTE</b>${safe(value('client'))}</div>
     <div class="info"><b>DATA</b>${safe(date)}</div>
@@ -313,11 +337,14 @@ ${row(`Espera (${waitDescription})`, brl(result.waitCost))}
 ${row('Pedágios', brl(n('tolls')))}
 ${row('Estacionamento', brl(n('parking')))}
 ${row('Alimentação / diária', brl(n('meals')))}
+${quoteType === 'materials' ? row('Mão de obra', brl(result.laborCost)) : ''}
+${quoteType === 'purchases' ? row('Valor da nota da compra', brl(result.purchaseValue)) : ''}
 ${row($('otherDesc').value || 'Outros custos', brl(n('other')))}
 ${row('Subtotal antes do imposto', brl(result.subtotal))}
 ${row(`Imposto (${result.rate}%) — cálculo por dentro`, brl(result.tax))}
 <tr class="total"><td>VALOR FINAL DO ORÇAMENTO</td><td>${brl(result.final)}</td></tr>
 </table>
+${quoteType === 'purchases' && purchasePhotoData ? `<div class="section">ANEXO — FOTO DA NOTA / COMPROVANTE</div><img class="receipt-photo" src="${purchasePhotoData}" alt="Foto da nota da compra">` : ''}
 ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div class="notes">${safe($('notes').value)}</div>` : ''}
 <div class="foot">AGUIAR TRANSPORTE DE EMPRESAS · Documento de orçamento, não é nota fiscal.</div>
 <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
@@ -326,6 +353,95 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
         printWindow.document.close();
     }
 
+
+
+    const quoteTypeLabels = {
+        people: 'Transporte de pessoas',
+        materials: 'Transporte de materiais',
+        purchases: 'Compras para empresa'
+    };
+
+    function applyQuoteType() {
+        $('selectedTypeLabel').textContent = quoteTypeLabels[quoteType];
+        $('laborCostBox').classList.toggle('hidden', quoteType !== 'materials');
+        $('purchaseValueBox').classList.toggle('hidden', quoteType !== 'purchases');
+        $('purchasePhotoBox').classList.toggle('hidden', quoteType !== 'purchases');
+        calc();
+    }
+
+    function updatePurchasePhotoPreview() {
+        const preview = $('purchasePhotoPreview');
+        const status = $('purchasePhotoStatus');
+        if (purchasePhotoData) {
+            preview.src = purchasePhotoData;
+            preview.classList.remove('hidden');
+            status.textContent = 'Imagem anexada ao orçamento.';
+        } else {
+            preview.removeAttribute('src');
+            preview.classList.add('hidden');
+            status.textContent = 'Nenhuma imagem anexada.';
+        }
+    }
+
+    function selectQuoteType(type) {
+        if (!quoteTypeLabels[type]) return;
+        quoteType = type;
+        $('quoteTypeScreen').classList.add('hidden');
+        $('wizardApp').classList.remove('hidden');
+        applyQuoteType();
+        showStep(1);
+    }
+
+    function bindQuoteTypeSelection() {
+        document.querySelectorAll('[data-quote-type]').forEach(button => {
+            button.addEventListener('click', () => selectQuoteType(button.dataset.quoteType));
+        });
+
+        $('changeQuoteType').addEventListener('click', () => {
+            $('wizardApp').classList.add('hidden');
+            $('quoteTypeScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        $('purchasePhoto').addEventListener('change', event => {
+            const file = event.target.files && event.target.files[0];
+            if (!file) {
+                purchasePhotoData = '';
+                updatePurchasePhotoPreview();
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                alert('Selecione um arquivo de imagem.');
+                event.target.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('A imagem deve ter no máximo 5 MB.');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const image = new Image();
+                image.onload = () => {
+                    const maxSide = 1600;
+                    const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(image.width * scale));
+                    canvas.height = Math.max(1, Math.round(image.height * scale));
+                    const context = canvas.getContext('2d');
+                    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                    purchasePhotoData = canvas.toDataURL('image/jpeg', 0.78);
+                    updatePurchasePhotoPreview();
+                };
+                image.onerror = () => alert('Não foi possível processar a imagem selecionada.');
+                image.src = String(reader.result || '');
+            };
+            reader.onerror = () => alert('Não foi possível ler a imagem selecionada.');
+            reader.readAsDataURL(file);
+        });
+    }
 
     let currentStep = 1;
 
@@ -372,6 +488,7 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
     }
 
     function init() {
+        bindQuoteTypeSelection();
         bindWizardNavigation();
         // Garante que os botões principais tenham seus eventos vinculados.
         $('saveTrip').addEventListener('click', saveTrip);
@@ -417,6 +534,7 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
         }
 
         renderHistory();
+        applyQuoteType();
         calc();
         showStep(1);
     }

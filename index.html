@@ -44,8 +44,36 @@
 
 
     <main class="wrap wizard-wrap">
-    <div class="wizard-shell">
-        <nav class="wizard-progress" aria-label="Progresso do orçamento">
+    <section id="quoteTypeScreen" class="type-screen">
+        <div class="step-heading">
+            <span class="step-kicker">AGUIAR TRANSPORTE</span>
+            <h2>Qual tipo de orçamento deseja fazer?</h2>
+            <p>Escolha uma modalidade para começar. As perguntas serão adaptadas à sua escolha.</p>
+        </div>
+        <div class="type-options">
+            <button type="button" class="type-option" data-quote-type="people">
+                <span class="type-icon">♙</span>
+                <strong>Transporte de pessoas</strong>
+                <small>Viagens, deslocamentos e transporte de passageiros</small>
+                <span class="type-choose">Selecionar →</span>
+            </button>
+            <button type="button" class="type-option" data-quote-type="materials">
+                <span class="type-icon">▣</span>
+                <strong>Transporte de materiais</strong>
+                <small>Transporte de materiais com cobrança adicional de mão de obra</small>
+                <span class="type-choose">Selecionar →</span>
+            </button>
+            <button type="button" class="type-option" data-quote-type="purchases">
+                <span class="type-icon">▤</span>
+                <strong>Compras para empresa</strong>
+                <small>Deslocamento para compras, valor da nota e foto do comprovante</small>
+                <span class="type-choose">Selecionar →</span>
+            </button>
+        </div>
+    </section>
+    <div class="wizard-shell hidden" id="wizardApp">
+        <div class="wizard-topline"><span id="selectedTypeLabel">Transporte de pessoas</span><button type="button" id="changeQuoteType" class="text-button">Trocar modalidade</button></div>
+<nav class="wizard-progress" aria-label="Progresso do orçamento">
 <div class="progress-track"><span id="progressFill"></span></div>
 <div class="progress-steps">
 <div class="progress-step current" data-progress="1"><span>1</span><small>Cliente</small></div>
@@ -395,6 +423,30 @@
                             </div>
                         </label>
 
+                        <label id="laborCostBox" class="wide conditional-cost hidden">
+                            Valor da mão de obra
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input id="laborCost" type="number" min="0" step=".01" value="0">
+                            </div>
+                        </label>
+
+                        <label id="purchaseValueBox" class="wide conditional-cost hidden">
+                            Valor da nota da compra
+                            <div class="prefix">
+                                <b>R$</b>
+                                <input id="purchaseValue" type="number" min="0" step=".01" value="0">
+                            </div>
+                        </label>
+
+                        <label id="purchasePhotoBox" class="wide conditional-cost hidden">
+                            Foto da nota ou comprovante da compra
+                            <input id="purchasePhoto" type="file" accept="image/*">
+                            <small>Selecione uma foto para anexar ao PDF. Formatos de imagem, até 5 MB.</small>
+                            <span id="purchasePhotoStatus" class="upload-status">Nenhuma imagem anexada.</span>
+                            <img id="purchasePhotoPreview" class="purchase-preview hidden" alt="Prévia da foto da nota">
+                        </label>
+
                         <label class="wide">
                             Descrição de outros custos
                             <input
@@ -536,6 +588,14 @@
                         <span>Pedágios e demais despesas</span>
                         <b id="sExtras">R$ 0,00</b>
                     </div>
+                    <div class="row conditional-cost hidden" id="sLaborRow">
+                        <span>Mão de obra</span>
+                        <b id="sLabor">R$ 0,00</b>
+                    </div>
+                    <div class="row conditional-cost hidden" id="sPurchaseRow">
+                        <span>Valor da nota da compra</span>
+                        <b id="sPurchase">R$ 0,00</b>
+                    </div>
 
                     <div class="row subtotal">
                         <span>Subtotal antes do imposto</span>
@@ -589,6 +649,7 @@
     </section>
     
         </div>
+    </div>
     </div>
 </main>
 

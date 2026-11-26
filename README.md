@@ -1,23 +1,19 @@
 # AGUIAR TRANSPORTE
 
-Aplicativo estático de orçamento corporativo com navegação em sete etapas.
+Aplicativo estático de orçamentos corporativos, com seleção inicial do tipo de orçamento e navegação em etapas.
 
-## Etapas
-1. Cliente e identificação
-2. Origem, destino e modalidade
-3. Distância e tarifas
-4. Tempo de espera
-5. Pedágios e outras despesas
-6. Imposto e observações
-7. Revisão, resumo, salvamento e PDF
+## Modalidades
+- **Transporte de pessoas:** mantém cálculo por quilômetro e hora, modalidade ida/ida e volta, espera, pedágios e demais despesas.
+- **Transporte de materiais:** mantém os custos de transporte e acrescenta valor manual de mão de obra.
+- **Compras para empresa:** mantém os custos de deslocamento e acrescenta o valor da nota da compra; permite anexar foto da nota/comprovante, incluída no PDF.
 
-## Regras preservadas
-- Ida e volta dobra automaticamente distância e tempo de percurso.
-- Pedágios e demais despesas são informados manualmente como totais.
-- Espera pode ser cobrada por hora, valor fixo ou não ser cobrada.
-- Imposto calculado por dentro: subtotal ÷ (1 - percentual/100).
-- Histórico permite salvar, carregar para edição e excluir orçamentos.
-- PDF gerado pela impressão do navegador; não emite nota fiscal.
-- Tema claro laranja e branco, com opção escura.
+## Regras
+- Ida e volta duplica automaticamente a distância e o tempo do percurso.
+- Pedágios e demais despesas são informados manualmente como total da viagem.
+- Espera por hora, valor fixo ou sem espera.
+- Imposto por dentro: subtotal ÷ (1 - percentual/100).
+- Histórico permite salvar, carregar para edição e excluir.
+- O resumo aparece na última etapa; o PDF é gerado pela impressão do navegador.
+- Tema laranja e branco com opção escura.
 
-O histórico e a preferência de tema permanecem armazenados localmente no navegador. Não há sincronização em nuvem.
+O histórico e a foto anexada ficam armazenados localmente no navegador. Fotos são redimensionadas/comprimidas antes de salvar. Não há sincronização em nuvem nem emissão de nota fiscal.
