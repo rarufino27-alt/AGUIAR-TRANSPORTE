@@ -11,11 +11,12 @@
     let trip = 'one';
     let wait = 'hourly';
     let quoteType = 'people';
+    let travelType = 'extra';
     let purchasePhotoData = '';
     const HISTORY_KEY = 'felmor-company-confirmed-trips-v1';
     const fieldIds = [
-        'client', 'date', 'purpose', 'origin', 'destination',
-        'km', 'hours', 'rateKm', 'rateHour',
+        'client', 'requester', 'costCenter', 'date', 'purpose', 'origin', 'destination',
+        'km', 'hours',
         'waitHours', 'waitRate', 'waitFixed',
         'tolls', 'parking', 'meals', 'other', 'otherDesc',
         'taxEnabled', 'taxRate', 'notes', 'laborCost', 'purchaseValue'
@@ -23,10 +24,12 @@
 
     function calc() {
         const factor = trip === 'round' ? 2 : 1;
-        const km = n('km') * factor;
+        const actualKm = n('km') * factor;
+        const km = actualKm > 0 ? Math.max(actualKm, 18) : 0;
         const hours = n('hours') * factor;
-        const kmCost = km * n('rateKm');
-        const hourCost = hours * n('rateHour');
+        const minutes = hours * 60;
+        const kmCost = km * 2.25;
+        const hourCost = minutes * 0.083;
 
         const waitCost = wait === 'hourly'
             ? n('waitHours') * n('waitRate')
@@ -45,8 +48,8 @@
 
         $('final').textContent = brl(final);
         $('tripLabel').textContent = trip === 'round' ? 'Ida e volta' : 'Somente ida';
-        $('sKm').textContent = km.toLocaleString('pt-BR') + ' km';
-        $('sHours').textContent = hours.toLocaleString('pt-BR') + ' h';
+        $('sKm').textContent = `${actualKm.toLocaleString('pt-BR')} km reais · ${km.toLocaleString('pt-BR')} km cobrados`;
+        $('sHours').textContent = `${hours.toLocaleString('pt-BR')} h (${minutes.toLocaleString('pt-BR')} min)`;
         $('sKmCost').textContent = brl(kmCost);
         $('sHourCost').textContent = brl(hourCost);
         $('sWait').textContent = brl(waitCost);
@@ -64,7 +67,7 @@
             ? `${brl(subtotal)} ÷ ${(1 - rate / 100).toLocaleString('pt-BR', { maximumFractionDigits: 4 })} = ${brl(final)}. Cálculo por dentro.`
             : `Subtotal: ${brl(subtotal)}. ${taxOn ? 'Alíquota igual a zero.' : 'Sem imposto.'}`;
 
-        return { km, hours, kmCost, hourCost, waitCost, extras, laborCost, purchaseValue, subtotal, rate, tax, final };
+        return { km, actualKm, hours, minutes, kmCost, hourCost, waitCost, extras, laborCost, purchaseValue, subtotal, rate, tax, final };
     }
 
     function setTrip(value) {
@@ -218,6 +221,7 @@
 
         quoteType = record.quoteType || 'people';
         purchasePhotoData = record.purchasePhotoData || '';
+        $('travelTypeScreen').classList.add('hidden');
         $('quoteTypeScreen').classList.add('hidden');
         $('wizardApp').classList.remove('hidden');
         applyQuoteType();
@@ -252,7 +256,7 @@
             input.value = input.type === 'date' ? '' : '0';
         });
 
-        ['client', 'purpose', 'origin', 'destination', 'otherDesc'].forEach(id => {
+        ['client', 'requester', 'costCenter', 'purpose', 'origin', 'destination', 'otherDesc'].forEach(id => {
             $(id).value = '';
         });
 
@@ -322,17 +326,21 @@ tr.total td{font-size:16px;font-weight:900;border-top:2px solid #ed742b;color:#e
 </header>
 <h2>Orçamento — ${safe(typeTitle)}</h2>
 <div class="grid">
-    <div class="info"><b>CLIENTE</b>${safe(value('client'))}</div>
+    <div class="info"><b>EMPRESA</b>${safe(value('client'))}</div>
+    <div class="info"><b>SOLICITANTE DA VIAGEM</b>${safe(value('requester'))}</div>
+    <div class="info"><b>CENTRO DE CUSTO</b>${safe(value('costCenter'))}</div>
     <div class="info"><b>DATA</b>${safe(date)}</div>
     <div class="info"><b>ORIGEM</b>${safe(value('origin'))}</div>
     <div class="info"><b>DESTINO</b>${safe(value('destination'))}</div>
+    <div class="info"><b>DISTÂNCIA REAL / COBRADA</b>${result.actualKm} km / ${result.km} km</div>
+    <div class="info"><b>TEMPO DE PERCURSO</b>${result.hours} h (${result.minutes} min)</div>
     <div class="info"><b>FINALIDADE</b>${safe(value('purpose'))}</div>
     <div class="info"><b>MODALIDADE</b>${trip === 'round' ? 'Ida e volta' : 'Somente ida'}</div>
 </div>
 <div class="section">DETALHAMENTO DOS CUSTOS</div>
 <table>
-${row(`Quilometragem (${result.km} km × ${brl(n('rateKm'))}/km)`, brl(result.kmCost))}
-${row(`Percurso (${result.hours} h × ${brl(n('rateHour'))}/h)`, brl(result.hourCost))}
+${row(`Quilometragem (${result.km} km cobrados × R$ 2,25/km)`, brl(result.kmCost))}
+${row(`Tempo de percurso (${result.minutes} min × R$ 0,083/min)`, brl(result.hourCost))}
 ${row(`Espera (${waitDescription})`, brl(result.waitCost))}
 ${row('Pedágios', brl(n('tolls')))}
 ${row('Estacionamento', brl(n('parking')))}
@@ -383,6 +391,23 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
         }
     }
 
+    function selectTravelType(type) {
+        travelType = type;
+        if (type === 'fixed') {
+            alert('A consulta de rotas fixas será ativada quando cadastrarmos a base DATA com os valores contratuais. A modalidade Viagem extra permanece independente.');
+            return;
+        }
+        $('travelTypeScreen').classList.add('hidden');
+        $('quoteTypeScreen').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function bindTravelTypeSelection() {
+        document.querySelectorAll('[data-travel-type]').forEach(button => {
+            button.addEventListener('click', () => selectTravelType(button.dataset.travelType));
+        });
+    }
+
     function selectQuoteType(type) {
         if (!quoteTypeLabels[type]) return;
         quoteType = type;
@@ -393,6 +418,12 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
     }
 
     function bindQuoteTypeSelection() {
+        $('backToTravelType').addEventListener('click', () => {
+            $('quoteTypeScreen').classList.add('hidden');
+            $('travelTypeScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
         document.querySelectorAll('[data-quote-type]').forEach(button => {
             button.addEventListener('click', () => selectQuoteType(button.dataset.quoteType));
         });
@@ -488,6 +519,7 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
     }
 
     function init() {
+        bindTravelTypeSelection();
         bindQuoteTypeSelection();
         bindWizardNavigation();
         // Garante que os botões principais tenham seus eventos vinculados.
@@ -534,6 +566,9 @@ ${$('notes').value ? `<div class="section">OBSERVAÇÕES E CONDIÇÕES</div><div
         }
 
         renderHistory();
+        $('travelTypeScreen').classList.remove('hidden');
+        $('quoteTypeScreen').classList.add('hidden');
+        $('wizardApp').classList.add('hidden');
         applyQuoteType();
         calc();
         showStep(1);

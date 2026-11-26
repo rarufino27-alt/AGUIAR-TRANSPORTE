@@ -44,10 +44,32 @@
 
 
     <main class="wrap wizard-wrap">
-    <section id="quoteTypeScreen" class="type-screen">
+    
+    <section id="travelTypeScreen" class="type-screen">
         <div class="step-heading">
             <span class="step-kicker">AGUIAR TRANSPORTE</span>
-            <h2>Qual tipo de orçamento deseja fazer?</h2>
+            <h2>Qual é o tipo de viagem?</h2>
+            <p>Escolha entre uma rota fixa já cadastrada ou uma viagem extra.</p>
+        </div>
+        <div class="type-options">
+            <button type="button" class="type-option" data-travel-type="fixed">
+                <span class="type-icon">↗</span>
+                <strong>Rota fixa</strong>
+                <small>Consultar valores contratuais cadastrados</small>
+                <span class="type-choose">Selecionar →</span>
+            </button>
+            <button type="button" class="type-option" data-travel-type="extra">
+                <span class="type-icon">＋</span>
+                <strong>Viagem extra</strong>
+                <small>Orçamento avulso com cálculo automático</small>
+                <span class="type-choose">Selecionar →</span>
+            </button>
+        </div>
+    </section>
+<section id="quoteTypeScreen" class="type-screen hidden">
+        <div class="step-heading">
+            <span class="step-kicker">AGUIAR TRANSPORTE</span>
+            <h2>Qual categoria de viagem extra deseja orçar?</h2><button type="button" id="backToTravelType" class="text-button">← Voltar ao tipo de viagem</button>
             <p>Escolha uma modalidade para começar. As perguntas serão adaptadas à sua escolha.</p>
         </div>
         <div class="type-options">
@@ -72,11 +94,17 @@
         </div>
     </section>
     <div class="wizard-shell hidden" id="wizardApp">
-        <div class="wizard-topline"><span id="selectedTypeLabel">Transporte de pessoas</span><button type="button" id="changeQuoteType" class="text-button">Trocar modalidade</button></div>
+        <div class="wizard-topline"><span id="selectedTypeLabel">Transporte de pessoas</span><button type="button" id="changeQuoteType" class="text-button">Trocar categoria</button></div>
 <nav class="wizard-progress" aria-label="Progresso do orçamento">
 <div class="progress-track"><span id="progressFill"></span></div>
 <div class="progress-steps">
-<div class="progress-step current" data-progress="1"><span>1</span><small>Cliente</small></div>
+<div class="progress-step current" data-progress="1"><span>1</span><small>Identificação</small></div>
+<div class="progress-step" data-progress="2"><span>2</span><small>Percurso</small></div>
+<div class="progress-step" data-progress="3"><span>3</span><small>Espera</small></div>
+<div class="progress-step" data-progress="4"><span>4</span><small>Despesas</small></div>
+<div class="progress-step" data-progress="5"><span>5</span><small>Imposto</small></div>
+<div class="progress-step" data-progress="6"><span>6</span><small>Revisão</small></div>
+</div>
 <div class="progress-step" data-progress="2"><span>2</span><small>Percurso</small></div>
 <div class="progress-step" data-progress="3"><span>3</span><small>Tarifas</small></div>
 <div class="progress-step" data-progress="4"><span>4</span><small>Espera</small></div>
@@ -88,7 +116,7 @@
             
     <section class="wizard-step active" data-step="1" aria-hidden="false">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 1 DE 7</span>
+            <span class="step-kicker">ETAPA 1 DE 6</span>
             <h2>Quem está solicitando a viagem?</h2>
             <p>Preencha as informações abaixo para continuar.</p>
         </div>
@@ -99,10 +127,26 @@
                     <div class="fields">
 
                         <label class="wide">
-                            Empresa / cliente
+                            Empresa
                             <input
                                 id="client"
-                                placeholder="Nome da empresa ou responsável"
+                                placeholder="Nome da empresa contratante"
+                            >
+                        </label>
+
+                        <label>
+                            Solicitante da viagem
+                            <input
+                                id="requester"
+                                placeholder="Nome de quem solicitou"
+                            >
+                        </label>
+
+                        <label>
+                            Centro de custo
+                            <input
+                                id="costCenter"
+                                placeholder="Código ou identificação do centro de custo"
                             >
                         </label>
 
@@ -134,7 +178,7 @@
     
     <section class="wizard-step" data-step="2" aria-hidden="true">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 2 DE 7</span>
+            <span class="step-kicker">ETAPA 2 DE 6</span>
             <h2>De onde sairemos e para onde vamos?</h2>
             <p>Preencha as informações abaixo para continuar.</p>
         </div>
@@ -172,7 +216,7 @@
                         </label>
 
                         <label>
-                            Tempo de percurso de ida (h)
+                            Tempo estimado de percurso de ida (h)
                             <input
                                 id="hours"
                                 type="number"
@@ -213,58 +257,7 @@
     
     <section class="wizard-step" data-step="3" aria-hidden="true">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 3 DE 7</span>
-            <h2>Como será calculado o deslocamento?</h2>
-            <p>Preencha as informações abaixo para continuar.</p>
-        </div>
-        <article class="card">
-
-                    <h3>Tarifas de percurso</h3>
-
-                    <div class="fields">
-
-                        <label>
-                            Valor por quilômetro (R$/km)
-
-                            <div class="prefix">
-                                <b>R$</b>
-                                <input
-                                    id="rateKm"
-                                    type="number"
-                                    min="0"
-                                    step=".01"
-                                    value="0"
-                                >
-                            </div>
-                        </label>
-
-                        <label>
-                            Valor por hora (R$/h)
-
-                            <div class="prefix">
-                                <b>R$</b>
-                                <input
-                                    id="rateHour"
-                                    type="number"
-                                    min="0"
-                                    step=".01"
-                                    value="0"
-                                >
-                            </div>
-                        </label>
-
-                    </div>
-
-                </article>
-        <div class="wizard-navigation">
-            <button type="button" class="secondary wizard-back" >← Voltar</button>
-            <button type="button" class="primary wizard-next">Próximo →</button>
-        </div>
-    </section>
-    
-    <section class="wizard-step" data-step="4" aria-hidden="true">
-        <div class="step-heading">
-            <span class="step-kicker">ETAPA 4 DE 7</span>
+            <span class="step-kicker">ETAPA 3 DE 6</span>
             <h2>Haverá tempo de espera?</h2>
             <p>Preencha as informações abaixo para continuar.</p>
         </div>
@@ -346,9 +339,9 @@
         </div>
     </section>
     
-    <section class="wizard-step" data-step="5" aria-hidden="true">
+    <section class="wizard-step" data-step="4" aria-hidden="true">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 5 DE 7</span>
+            <span class="step-kicker">ETAPA 4 DE 6</span>
             <h2>Quais custos adicionais devemos considerar?</h2>
             <p>Preencha as informações abaixo para continuar.</p>
         </div>
@@ -464,9 +457,9 @@
         </div>
     </section>
     
-    <section class="wizard-step" data-step="6" aria-hidden="true">
+    <section class="wizard-step" data-step="5" aria-hidden="true">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 6 DE 7</span>
+            <span class="step-kicker">ETAPA 5 DE 6</span>
             <h2>Deseja incluir imposto no orçamento?</h2>
             <p>Preencha as informações abaixo para continuar.</p>
         </div>
@@ -534,9 +527,9 @@
         </div>
     </section>
     
-    <section class="wizard-step" data-step="7" aria-hidden="true">
+    <section class="wizard-step" data-step="6" aria-hidden="true">
         <div class="step-heading">
-            <span class="step-kicker">ETAPA 7 DE 7</span>
+            <span class="step-kicker">ETAPA 6 DE 6</span>
             <h2>Confira o orçamento completo.</h2>
             <p>Tudo pronto? Revise os dados e finalize seu orçamento.</p>
         </div>
@@ -570,12 +563,12 @@
                     </div>
 
                     <div class="row">
-                        <span>Custo por km</span>
+                        <span>Custo por quilometragem</span>
                         <b id="sKmCost">R$ 0,00</b>
                     </div>
 
                     <div class="row">
-                        <span>Custo por hora</span>
+                        <span>Custo pelo tempo de percurso</span>
                         <b id="sHourCost">R$ 0,00</b>
                     </div>
 

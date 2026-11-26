@@ -23,3 +23,12 @@ Aplicativo estático de orçamentos corporativos com seleção inicial de modali
 - Revisão final, geração de PDF e tema laranja/branco com opção escura.
 
 O histórico e anexos ficam armazenados localmente no navegador. Não há sincronização em nuvem nem emissão de nota fiscal.
+
+
+## Atualização — modalidades e viagem extra
+- Tela inicial separa Rota fixa de Viagem extra.
+- Rota fixa fica reservada para consulta futura da base DATA, sem aplicar tarifas de viagem extra.
+- Viagem extra identifica empresa, solicitante e centro de custo.
+- Tarifas fixas: R$ 2,25 por km e R$ 0,083 por minuto de percurso.
+- Mínimo de 18 km cobrados quando houver distância informada.
+- A etapa de tarifas editáveis foi removida; permanece apenas a configuração de tempo de espera.
